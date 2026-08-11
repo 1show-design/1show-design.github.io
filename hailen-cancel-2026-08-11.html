@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>하일렌 취소 → 대기자 투입 추적 — 2026.08.11(화)</title>
+<style>
+:root{--bg:#fbfbf9;--fg:#1c1c1a;--mut:#6b6b66;--line:#e5e5e0;--soft:#f2f2ee;--ok:#1a7f5a;--okbg:#e7f4ee;--bad:#b0342c;--badbg:#fbeceb;--warn:#8a5a00;--warnbg:#fdf3e0;--card:#fff;--acc:#2f6f4f;--o1:#1f5f8b;--o1bg:#e6f0f7;--o2:#7a3f8f;--o2bg:#f2e9f6}
+@media(prefers-color-scheme:dark){:root{--bg:#151513;--fg:#ecebe6;--mut:#a5a39d;--line:#34312a;--soft:#1f1d1a;--ok:#5fc79b;--okbg:#123329;--bad:#e88a82;--badbg:#381d1b;--warn:#e0b463;--warnbg:#362b13;--card:#1e1c19;--acc:#7fc9a3;--o1:#7fb8de;--o1bg:#152c3c;--o2:#c79bd6;--o2bg:#2c1c33}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",Pretendard,"Malgun Gothic",sans-serif;line-height:1.62;font-size:15px}
+.wrap{max-width:1060px;margin:0 auto;padding:28px 18px 90px}
+h1{font-size:24px;margin:0 0 5px;letter-spacing:-.025em;line-height:1.25}
+.sub{color:var(--mut);font-size:13px;margin:0}
+nav{display:flex;gap:6px;margin:22px 0 8px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+nav button{appearance:none;background:none;border:0;border-bottom:2px solid transparent;color:var(--mut);font:inherit;font-size:14px;font-weight:600;padding:9px 13px;cursor:pointer;margin-bottom:-1px;border-radius:6px 6px 0 0}
+nav button:hover{background:var(--soft);color:var(--fg)}
+nav button[aria-selected="true"]{color:var(--acc);border-bottom-color:var(--acc)}
+section[hidden]{display:none}
+h2{font-size:18px;margin:34px 0 10px;padding-bottom:7px;border-bottom:2px solid var(--line);letter-spacing:-.015em}
+h2:first-of-type{margin-top:22px}
+h3{font-size:15px;margin:22px 0 6px;letter-spacing:-.01em}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:8px 0 4px;background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden}
+th{background:var(--soft);text-align:left;padding:8px 10px;font-size:12px;font-weight:700;white-space:nowrap;color:var(--mut)}
+td{padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+td:first-child{white-space:nowrap}
+.t{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600}
+.pill{display:inline-block;padding:1px 8px;border-radius:99px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.p-ok{background:var(--okbg);color:var(--ok)}.p-bad{background:var(--badbg);color:var(--bad)}.p-warn{background:var(--warnbg);color:var(--warn)}.p-na{background:var(--soft);color:var(--mut)}
+.own{display:inline-block;padding:1px 9px;border-radius:99px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.ow-m{background:var(--o1bg);color:var(--o1)}.ow-k{background:var(--o2bg);color:var(--o2)}
+.note{background:var(--card);border:1px solid var(--line);border-left-width:3px;padding:11px 15px;border-radius:0 9px 9px 0;margin:12px 0;font-size:14px}
+.note.w{border-left-color:var(--warn)}.note.b{border-left-color:var(--bad)}.note.g{border-left-color:var(--ok)}.note.n{border-left-color:var(--mut)}
+.big{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:10px;margin:16px 0 6px}
+.b1{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:13px 15px}
+.b1 .n{font-size:26px;font-weight:750;letter-spacing:-.035em;line-height:1.05;font-variant-numeric:tabular-nums}
+.b1 .l{font-size:11.5px;color:var(--mut);margin-top:4px;line-height:1.4}
+code{background:var(--soft);border:1px solid var(--line);padding:0 5px;border-radius:4px;font-size:12.5px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+ul{padding-left:19px;margin:6px 0}li{margin:5px 0}
+.cap{font-size:12.5px;color:var(--mut);margin:2px 0 14px;line-height:1.5}
+footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);color:var(--mut);font-size:12.5px}
+.st{display:flex;gap:11px;padding:12px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.st:last-child{border-bottom:0}
+.st .ic{flex:0 0 auto;width:21px;height:21px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;margin-top:1px}
+.ic.done{background:var(--ok);color:#fff}.ic.prog{background:var(--warn);color:#fff}.ic.open{background:var(--badbg);color:var(--bad);border:1.5px solid var(--bad)}
+.st .bd{flex:1;min-width:0}
+.st .ttl{font-weight:650;font-size:14px;line-height:1.45}
+.st .ds{font-size:13px;color:var(--mut);margin-top:2px;line-height:1.5}
+.st .an{font-size:13px;margin-top:5px;padding:7px 11px;background:var(--soft);border-radius:7px;line-height:1.5}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px 16px 12px;margin:14px 0}
+.card>.hd{display:flex;align-items:center;gap:9px;padding:12px 0 8px;border-bottom:1px solid var(--line);font-weight:700;font-size:15px;flex-wrap:wrap}
+@media(max-width:640px){.wrap{padding:20px 13px 70px}h1{font-size:20px}table{font-size:12.5px}th,td{padding:7px 8px}}
+@media print{nav{display:none!important}section[hidden]{display:block!important}section{page-break-before:always}section#a{page-break-before:auto}
+body{font-size:11pt;background:#fff;color:#111}.wrap{padding:0;max-width:100%}
+table,.note,.card,.b1,.st{page-break-inside:avoid}h2,h3{page-break-after:avoid}}
+</style></head><body><div class="wrap">
+
+<header>
+<h1>하일렌 취소 → 대기자 투입 추적</h1>
+<p class="sub">2026.08.11 (화) · <b>도수 · 고주파 · 림프</b> <span style="opacity:.65">(통증 · 주사 제외)</span> · <b>2차 정리본</b> — 현장 확인 반영<br>근거: 치료실 단톡 로그 + 하일렌 스케줄표.xlsx <code>2026 8월</code></p>
+</header>
+
+<nav role="tablist">
+<button role="tab" aria-selected="true" data-t="a">① 확인 결과</button>
+<button role="tab" aria-selected="false" data-t="b">② 8/11 자리 채움 현황</button>
+<button role="tab" aria-selected="false" data-t="e">③ 이번에 확정된 규칙</button>
+<button role="tab" aria-selected="false" data-t="c">④ 매일 볼 체크리스트</button>
+</nav>
+
+<!-- ===================== TAB A ===================== -->
+<section id="a">
+<div class="big">
+<div class="b1"><div class="n" style="color:var(--ok)">16<span style="font-size:16px;color:var(--mut)">/16</span></div><div class="l">도수·림프 취소 자리를<br>모두 다시 채움</div></div>
+<div class="b1"><div class="n" style="color:var(--ok)">0</div><div class="l">놓쳐서 빈 자리</div></div>
+<div class="b1"><div class="n" style="color:var(--warn)">3</div><div class="l">치료사 부재로<br>자리 자체가 없던 건</div></div>
+<div class="b1"><div class="n" style="color:var(--bad)">2</div><div class="l">제 판독 오류<br>(정정 완료)</div></div>
+</div>
+
+<div class="note g"><b>결론이 바뀌었습니다 — 8/11에 놓친 자리는 없습니다.</b><br>
+어제 "빈자리 7개"로 보고드렸으나, 현장 확인 결과 대부분 이미 처리됐거나 <b>애초에 채울 수 없는 자리</b>였습니다. 남은 3자리는 <u>치료사가 없어서</u> 비었지, 대기자를 못 넣어서 비운 게 아닙니다.</div>
+
+<h2>보고 항목별 확인 결과</h2>
+
+<div class="card">
+<div class="hd"><span class="own ow-m">문혜정 매니저</span> 외래</div>
+
+<div class="st"><span class="ic done">✓</span><span class="bd">
+<span class="ttl">서윤희 / 외 — 취소 날짜 8/19 vs 8/18</span>
+<span class="ds">카톡의 8/19가 화요일 고정 요일과 맞지 않아 확인 요청드렸던 건.</span>
+<span class="an"><b>확인 완료 — 8/19는 오기입니다.</b> 실제 취소일은 8/18(화)이고 시트 처리가 맞습니다. <span class="pill p-ok">종결</span></span></span></div>
+
+<div class="st"><span class="ic done">✓</span><span class="bd">
+<span class="ttl">서윤희 / 외 — 8/18 17:00 통증에 취소선이 없다</span>
+<span class="ds">제가 "림프만 처리되고 통증은 미처리"라고 보고드렸던 건.</span>
+<span class="an"><b>제 판독 오류입니다. 취소선 있습니다.</b> 한 칸에 이름이 둘일 때(<code>서윤희/외 · 최은옥/외</code>) <u>서윤희님에게만 그은 취소선</u>을 제 판독기가 읽지 못했습니다. 판독 방식을 고쳤습니다. <span class="pill p-ok">종결</span></span></span></div>
+
+<div class="st"><span class="ic done">✓</span><span class="bd">
+<span class="ttl">오송미 / 외 — 8/11 15:30 통증 취소 표기</span>
+<span class="an"><b>현장에서 취소선 처리 완료.</b> 참고로 같은 건의 <b>림프 16:30도 원래 취소선이 있었습니다</b> — 제가 "<code>x</code> 메모로 대체"라고 본 것도 같은 판독 오류였습니다. <span class="pill p-ok">종결</span></span></span></div>
+
+<div class="st"><span class="ic prog">→</span><span class="bd">
+<span class="ttl">고은미 / 외 — 8/12 림프 15:30 · 8/14 도수 13:30 빈자리</span>
+<span class="an"><b>체크 완료, 대기자 투입 예정.</b> 이 자료로 잡아낸 <u>유일한 실제 회수 가능 자리</u>입니다. <span class="pill p-warn">진행 중</span></span></span></div>
+
+<div class="st"><span class="ic done">✓</span><span class="bd">
+<span class="ttl">김명숙3 / 단입 — 고정 고주파 취소 흔적 없음 <span style="font-weight:500;color:var(--mut)">(담당: 문혜정 매니저)</span></span>
+<span class="an"><b>정상입니다 — 고주파는 원래 취소선 없이 지웁니다.</b> 담당도 병동이 아니라 외래(문혜정 매니저)로 정정합니다. 다만 이 방식이면 <b>고주파는 이 자료로 취소 추적이 불가능</b>합니다(아래 ③번 탭 참고). <span class="pill p-ok">종결</span></span></span></div>
+</div>
+
+<div class="card">
+<div class="hd"><span class="own ow-k">김민정 선생님</span> 병동</div>
+<div class="st"><span class="ic done">✓</span><span class="bd">
+<span class="ttl">김명숙3 / 단입 — 8/13 림프 14:30 빈자리</span>
+<span class="an"><b>담당 선생님 연차입니다.</b> 자리 자체가 없었으므로 대기자를 넣을 수 없었습니다. 회수 실패가 아닙니다. <span class="pill p-ok">종결</span></span></span></div>
+</div>
+
+<div class="card">
+<div class="hd">림프실</div>
+<div class="st"><span class="ic done">✓</span><span class="bd">
+<span class="ttl">채송아 실장 라인 3자리 (09:00 · 11:00 · 15:30)</span>
+<span class="an"><b>실장님 휴가.</b> 예약 환자를 다른 림프 선생님께 옮기려 했으나 <u>받아줄 자리가 없어</u> 취소된 것입니다. 조현임 · 이화영님 2분만 최서우 선생님께 자리가 나 옮겨 드렸습니다. <span class="pill p-ok">종결</span></span></span></div>
+</div>
+
+<div class="note b" style="margin-top:20px"><b>그래서 진짜 문제는 이것입니다 — 림프는 이미 꽉 차 있습니다</b><br>
+8/11에 채우지 못한 자리 3개(+8/13 1개)는 전부 <b>"넣을 대기자가 없어서"가 아니라 "받아줄 치료사가 없어서"</b> 비었습니다. 취소 관리로는 해결되지 않는 문제입니다.<br><br>
+<b>확인해 볼 것</b> — 림프 선생님 한 분이 휴가·연차를 쓰면 그날 그 라인은 통째로 손실됩니다. 8/11 하루만 3자리였습니다. <u>휴가일에 다른 선생님 자리를 미리 비워두거나, 그날은 예약을 안 받는 방식</u>을 검토해 보실 만합니다.</div>
+</section>
+
+<!-- ===================== TAB B ===================== -->
+<section id="b" hidden>
+<div class="big">
+<div class="b1"><div class="n" style="color:var(--ok)">7<span style="font-size:16px;color:var(--mut)">/7</span></div><div class="l">도수 · 취소 자리 다시 채움</div></div>
+<div class="b1"><div class="n" style="color:var(--ok)">9<span style="font-size:16px;color:var(--mut)">/9</span></div><div class="l">림프 · 취소 자리 다시 채움<br><span style="opacity:.7">(정규 치료사 4명 기준)</span></div></div>
+<div class="b1"><div class="n" style="color:var(--warn)">3</div><div class="l">채송아 실장 휴가로<br>취소된 자리</div></div>
+<div class="b1"><div class="n" style="color:var(--ok)">3<span style="font-size:16px;color:var(--mut)">/3</span></div><div class="l">대기 중이던 환자<br>배정 성공</div></div>
+</div>
+
+<h2>도수 — 7건 취소, 7건 모두 다른 환자로 채움</h2>
+<table><tr><th>시간</th><th>치료사</th><th>비운 환자</th><th>들어간 환자</th><th>결과</th></tr>
+<tr><td class="t">09:00</td><td>선혜진</td><td>방미옥 <span style="color:var(--mut)">(8/18~ 재개)</span></td><td>이충일 · 첫 치료</td><td><span class="pill p-ok">채움</span></td></tr>
+<tr><td class="t">11:00</td><td>이은서</td><td><b>김미희2/단입</b> — 07:18 취소</td><td><b>홍희숙</b> · 도수 첫 치료 <span style="color:var(--mut)">(대기자)</span></td><td><span class="pill p-ok">채움</span></td></tr>
+<tr><td class="t">13:30</td><td>이연희</td><td>문미영/외 <span style="color:var(--mut)">(격주)</span></td><td>김성우 · 첫 치료</td><td><span class="pill p-ok">채움</span></td></tr>
+<tr><td class="t">14:30</td><td>나 황</td><td>조명하/외</td><td>최병철/외 <span style="color:var(--mut)">(7일 못한 것 보충)</span></td><td><span class="pill p-ok">채움</span></td></tr>
+<tr><td class="t">15:30</td><td>이연희</td><td>김남숙 <span style="color:var(--mut)">(8/11까지)</span></td><td>이상희2 <span style="color:var(--mut)">(15:36 "오셨습니다")</span></td><td><span class="pill p-ok">채움</span></td></tr>
+<tr><td class="t">15:30</td><td>나 황</td><td>이승노/외</td><td><b>김명선</b> · 첫 치료 <span style="color:var(--mut)">(09:59 예약)</span></td><td><span class="pill p-ok">채움</span></td></tr>
+<tr><td class="t">16:30</td><td>최은영</td><td>강용중 <span style="color:var(--mut)">(8/18~ 재개)</span></td><td>이상옥 <span style="color:var(--mut)">(림프 → 도수로 바꿔 받음)</span></td><td><span class="pill p-ok">채움</span></td></tr></table>
+
+<h2>림프 — 9건 취소, 9건 모두 다른 환자로 채움</h2>
+<p class="cap">정규 치료사 4명(편유진 · 최서우 · 윤진 · 이기아) 기준. 채송아 실장 라인은 아래에 따로 정리했습니다.</p>
+<table><tr><th>시간</th><th>치료사</th><th>비운 환자</th><th>들어간 환자</th><th>걸린 시간</th><th>결과</th></tr>
+<tr><td class="t">10:00</td><td>이기아</td><td>이유정 <span style="color:var(--mut)">(8/18만)</span></td><td>유연아</td><td>—</td><td><span class="pill p-ok">채움</span></td></tr>
+<tr><td class="t">11:00</td><td>이기아</td><td><b>정경미</b> — 08:47 취소</td><td><b>김봉애</b> · 림프 첫 치료</td><td class="t">50분</td><td><span class="pill p-ok">채움</span></td></tr>
+<tr><td class="t">11:00</td><td>최서우</td><td>강수완/단입</td><td>조현임/외 <span style="color:var(--mut)">(채송아 10:00에서 옮김)</span></td><td>—</td><td><span class="pill p-ok">채움</span></td></tr>
+<tr><td class="t">14:30</td><td>이기아</td><td><b>나미라</b> — 09:03 취소</td><td><b>정경미</b> <span style="color:var(--mut)">(오전 취소분 이동)</span></td><td class="t">즉시</td><td><span class="pill p-ok">채움</span></td></tr>
+<tr><td class="t">14:30</td><td>편유진</td><td>김상옥/외 <span style="color:var(--mut)">(8/18~)</span></td><td>방미옥 · 림프 첫 치료</td><td>—</td><td><span class="pill p-ok">채움</span></td></tr>
+<tr><td class="t">15:30</td><td>최서우</td><td><b>이미진1/외</b> — 약 15:00 취소</td><td><b>박선의</b> · 첫 치료</td><td class="t">약 30분</td><td><span class="pill p-ok">채움</span></td></tr>
+<tr><td class="t">16:30</td><td>편유진</td><td>문소연/외</td><td>박경주2</td><td>—</td><td><span class="pill p-ok">채움</span></td></tr>
+<tr><td class="t">16:30</td><td>최서우</td><td>이상옥 <span style="color:var(--mut)">(도수로 바꿔 받음)</span></td><td>이화영 <span style="color:var(--mut)">(채송아 16:30에서 옮김)</span></td><td>—</td><td><span class="pill p-ok">채움</span></td></tr>
+<tr><td class="t">16:30</td><td>이기아</td><td><b>오송미/외</b> — 16:35 취소</td><td><b>김미진</b> <span style="color:var(--mut)">(대기자)</span></td><td class="t">4분</td><td><span class="pill p-ok">채움</span></td></tr></table>
+
+<div class="note n"><b>정경미님 자리 옮기기 — 이날 가장 잘 처리된 사례입니다.</b><br>
+08:47 오전 림프 취소 → 09:00 나미라님이 비운 14:30 자리로 옮겨 확정 → 09:37 정경미님이 비운 11:00 자리에 김봉애님(림프 첫 치료) 투입. <b>취소 2건을 자리 손실 없이 소화하면서 신규 환자 1명을 더 받았습니다.</b></div>
+
+<h2>채송아 실장 라인 — 휴가로 전 타임 취소</h2>
+<table><tr><th>시간</th><th>예약 환자</th><th>처리</th></tr>
+<tr><td class="t">09:00</td><td>최명자</td><td><span class="pill p-warn">다른 선생님 자리 없어 취소</span></td></tr>
+<tr><td class="t">10:00</td><td>조현임/외</td><td><span class="pill p-ok">최서우 11:00으로 옮김</span></td></tr>
+<tr><td class="t">11:00</td><td>장경화/외</td><td><span class="pill p-warn">다른 선생님 자리 없어 취소</span></td></tr>
+<tr><td class="t">15:30</td><td>오희정</td><td><span class="pill p-warn">다른 선생님 자리 없어 취소</span></td></tr>
+<tr><td class="t">16:30</td><td>이화영</td><td><span class="pill p-ok">최서우 16:30으로 옮김</span></td></tr></table>
+<p class="cap">13:30 · 14:30은 원래 공란. 5명 중 2명만 다른 선생님께 옮길 자리가 있었습니다.</p>
+
+<h2>대기 중이던 환자 — 3명 전원 배정</h2>
+<table><tr><th>환자</th><th>대기 등록</th><th>배정</th><th>기다린 시간</th></tr>
+<tr><td><b>홍희숙</b></td><td class="t">09:44 — "도수 자리 없어서 못 잡음"</td><td>8/11 11:00 도수 <span style="color:var(--mut)">(김미희2 취소 자리)</span></td><td class="t">약 1시간</td></tr>
+<tr><td><b>김미진</b></td><td class="t">09:30 — "림프 자리 있으면 받고 싶다"</td><td>8/11 16:30 림프 <span style="color:var(--mut)">(오송미 취소 자리)</span></td><td class="t">약 7시간</td></tr>
+<tr><td><b>주순일</b></td><td class="t">13:20 — "도수 이번주 중 예약"</td><td>8/13 도수 첫 치료</td><td class="t">2일</td></tr></table>
+<div class="note g"><b>대기자 연결은 잘 돌아가고 있습니다.</b> 취소 자리에 넣을 사람이 미리 정해져 있으면 <b>4분</b> 만에도 채워집니다(김미진님). 8/11 기준 대기 3명 전원이 자리를 받았습니다.</div>
+</section>
+
+<!-- ===================== TAB E ===================== -->
+<section id="e" hidden>
+<h2>이번 확인으로 확정된 규칙</h2>
+
+<h3>1. 고주파는 취소선 없이 지웁니다</h3>
+<div class="note w"><b>이 자료로 고주파 취소는 추적할 수 없습니다.</b><br>
+도수 · 림프는 취소선을 남기지만 고주파는 이름을 통째로 지우는 방식입니다. 그래서 김명숙3님 "고정 고주파 취소"가 흔적 없이 사라진 것이고, 이건 잘못이 아니라 <b>원래 그렇게 하는 것</b>이었습니다.<br><br>
+<b>다만 이런 문제가 생깁니다</b> — 지워진 자리는 "비어 있는 자리"인지 "원래 없던 자리"인지 구분이 안 됩니다. 고주파에도 대기자를 넣으실 계획이라면 <u>지우는 대신 취소선</u>으로 바꾸셔야 합니다. 지금 방식대로 두시려면 고주파는 이 리포트 대상에서 빼겠습니다.</div>
+
+<h3>2. 한 칸에 이름이 둘일 때, 취소선은 한 명에게만 긋습니다</h3>
+<div class="note n">예: <code>서윤희/외 · 최은옥/외 #18일만</code> → 서윤희님에게만 취소선.<br>
+제 판독기가 <b>칸 전체</b>의 취소선만 읽고 있어서 이런 경우를 놓쳤습니다. 이번에 <b>글자 단위로 읽도록 고쳤고</b>, 8/11~8/18 도수 · 림프를 전부 다시 확인했습니다. <b>새로 발견된 누락은 없습니다</b> — 도수 · 림프는 처음부터 정확히 처리되고 있었습니다.</div>
+
+<h3>3. 치료사 부재일은 그 라인이 통째로 손실됩니다</h3>
+<div class="note b">채송아 실장 휴가 → 5명 중 3명 취소(8/11). 김명숙3님 담당 선생님 연차 → 1명 취소(8/13).<br>
+<b>취소 관리로는 해결되지 않는 문제입니다.</b> 림프가 이미 포화라 옮길 자리가 없기 때문입니다. 휴가일 예약 정책을 따로 정하셔야 합니다.</div>
+
+<h2>담당 구분 (정정)</h2>
+<table><tr><th>구분</th><th>담당</th><th>비고</th></tr>
+<tr><td>외래 <code>/외</code></td><td><span class="own ow-m">문혜정 매니저</span></td><td>—</td></tr>
+<tr><td>단기입원 <code>/단입</code></td><td><span class="own ow-m">문혜정 매니저</span></td><td>김명숙3님 건으로 확인 — 병동 아님</td></tr>
+<tr><td>입원 <span style="color:var(--mut)">(표기 없음)</span></td><td><span class="own ow-k">김민정 선생님</span></td><td>—</td></tr>
+<tr><td>고주파 전반</td><td><span class="own ow-m">문혜정 매니저</span></td><td>—</td></tr></table>
+
+<h2>시트 표기 규칙 (해독 완료)</h2>
+<table><tr><th>표기</th><th>의미</th></tr>
+<tr><td>치료사별 <b>2칸 한 쌍</b></td><td>왼쪽 = 고정 환자 / 오른쪽 = 당일 대체 환자</td></tr>
+<tr><td><b>취소선</b> (도수 · 림프)</td><td>그날 그 환자 안 옴 — 한 칸에 여럿이면 해당 이름에만</td></tr>
+<tr><td><b>이름 삭제</b> (고주파)</td><td>고주파 취소는 취소선 없이 지움</td></tr>
+<tr><td><code>#11일만</code></td><td>해당 일자에만 들어온 단발 배정</td></tr>
+<tr><td><code>#8/18~</code></td><td>그 날짜부터 재개 · 오늘은 해당 없음</td></tr>
+<tr><td>파란 배경</td><td>첫 치료 / OT</td></tr>
+<tr><td>8월 시트 구조</td><td>하루 = 27행 블록 (8/1 → 1행 시작)</td></tr></table>
+</section>
+
+<!-- ===================== TAB C ===================== -->
+<section id="c" hidden>
+<h2>매일 볼 3줄 <span style="font-size:13px;font-weight:400;color:var(--mut)">(개정판)</span></h2>
+<table><tr><th>#</th><th>확인 항목</th><th>8/11 결과</th></tr>
+<tr><td class="t">1</td><td><b>취소 자리에 대기자가 들어갔는가</b><br><span style="color:var(--mut)">이 자료의 핵심. 짝칸이 비어 있으면 회수 가능한 자리</span></td><td>도수 7/7 · 림프 9/9 <span class="pill p-ok">전부 채움</span></td></tr>
+<tr><td class="t">2</td><td><b>못 채운 자리의 이유가 무엇인가</b><br><span style="color:var(--mut)">"대기자 없음"과 "치료사 없음"은 대응이 완전히 다름</span></td><td>3자리 — 전부 <b>치료사 부재</b> <span class="pill p-warn">캐파 문제</span></td></tr>
+<tr><td class="t">3</td><td><b>미리 알려준 취소가 방치되지 않았는가</b><br><span style="color:var(--mut)">당일 취소보다 사전 취소가 더 오래 비는 경향</span></td><td>고은미 2자리 <span class="pill p-warn">조치 중</span></td></tr></table>
+
+<h2>이번 회차 결론</h2>
+<ul>
+<li><b>취소 → 대기자 연결은 이미 잘 돌아갑니다.</b> 8/11 도수·림프 취소 16건이 전부 다시 채워졌고, 대기 중이던 3명도 모두 자리를 받았습니다. 더 조일 부분이 거의 없습니다.</li>
+<li><b>진짜 병목은 치료사 자리입니다.</b> 못 채운 3자리는 대기자가 없어서가 아니라 받아줄 선생님이 없어서였습니다. <b>림프가 포화 상태</b>라는 신호입니다.</li>
+<li><b>휴가·연차일 예약 정책이 필요합니다.</b> 실장님 휴가 하루에 3자리, 선생님 연차에 1자리가 사라졌습니다. 미리 다른 선생님 자리를 비워두거나, 그날은 예약을 받지 않는 방식을 검토해 주세요.</li>
+<li><b>고주파는 추적 방식을 정해 주세요.</b> 지금은 취소 시 이름을 지워서 빈자리인지 확인이 불가능합니다. 취소선으로 바꾸시거나, 이 리포트 대상에서 빼겠습니다.</li>
+<li><b>사전 취소만 따로 챙기면 됩니다.</b> 당일 취소는 4분 만에 채우는데, 이틀 전에 받은 취소가 더 오래 비어 있습니다. 접수 즉시 대기자에게 연결하는 절차 하나면 해결됩니다.</li>
+</ul>
+</section>
+
+<footer>하일렌요양병원 취소 → 대기자 투입 추적 · 2026.08.11(화) 2차 정리본 · 도수 · 고주파 · 림프 (통증 · 주사 제외)<br>담당: 외래 · 단기입원 · 고주파 = 문혜정 매니저 / 병동 입원 = 김민정 스케줄러</footer>
+</div>
+<script>
+var btns=[].slice.call(document.querySelectorAll('nav button'));
+btns.forEach(function(b){b.addEventListener('click',function(){
+  btns.forEach(function(x){x.setAttribute('aria-selected',x===b?'true':'false');
+    document.getElementById(x.dataset.t).hidden=(x!==b);});
+  window.scrollTo({top:0,behavior:'smooth'});});});
+</script></body></html>
