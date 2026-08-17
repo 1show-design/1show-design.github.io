@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>오릭 원두 도입 트래커</title>
+<style>
+:root{
+  --bg:#F7F3EC; --card:#FFFFFF; --ink:#2B2320; --ink2:#6B5E55; --ink3:#9A8D82;
+  --line:#E7E0D6; --accent:#7C4A21; --accent-soft:#F3E7D9; --done:#2E7D46; --done-soft:#E8F3EC;
+  --warn:#B26A00; --warn-soft:#FCF3E3; --wait:#8A8078; --wait-soft:#F0ECE6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;line-height:1.55;padding-bottom:90px}
+.wrap{max-width:760px;margin:0 auto;padding:0 14px}
+header{background:#33261D;color:#F6EFE7;padding:22px 0 18px}
+header .wrap{display:flex;flex-direction:column;gap:10px}
+h1{font-size:21px;font-weight:800;letter-spacing:-.3px}
+.sub{font-size:12.5px;color:#CBB9A9}
+.progress-row{display:flex;align-items:center;gap:12px}
+.bar{flex:1;height:10px;background:#4A3A2E;border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#C98F55,#E8B778);border-radius:6px;transition:width .3s}
+.pct{font-size:14px;font-weight:800;min-width:86px;text-align:right;color:#F0DFC9}
+.notice{margin:14px 0 4px;background:var(--warn-soft);border:1px solid #EAD9B8;border-radius:12px;padding:10px 13px;font-size:12.5px;color:#7A5A16}
+.section-title{margin:22px 0 10px;font-size:15px;font-weight:800;color:var(--accent);display:flex;align-items:center;gap:8px}
+.section-title small{font-weight:600;color:var(--ink3);font-size:12px}
+.rules{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 15px;font-size:13.5px;display:flex;flex-direction:column;gap:7px}
+.rules b{color:var(--accent)}
+details.step{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;overflow:hidden}
+details.step[open]{box-shadow:0 2px 10px rgba(60,40,20,.06)}
+summary{list-style:none;cursor:pointer;padding:13px 15px;display:flex;align-items:center;gap:10px}
+summary::-webkit-details-marker{display:none}
+.stepnum{flex-shrink:0;width:30px;height:30px;border-radius:9px;background:var(--accent-soft);color:var(--accent);font-weight:800;font-size:13.5px;display:flex;align-items:center;justify-content:center}
+.stepname{flex:1;font-size:14.5px;font-weight:700}
+.stepname small{display:block;font-weight:500;font-size:11.5px;color:var(--ink3);margin-top:1px}
+.badge{flex-shrink:0;font-size:11px;font-weight:700;padding:4px 9px;border-radius:20px;white-space:nowrap}
+.badge.done{background:var(--done-soft);color:var(--done)}
+.badge.doing{background:var(--accent-soft);color:var(--accent)}
+.badge.wait{background:var(--wait-soft);color:var(--wait)}
+.chev{flex-shrink:0;color:var(--ink3);font-size:11px;transition:transform .2s}
+details[open] .chev{transform:rotate(180deg)}
+.body{padding:2px 15px 14px;border-top:1px solid var(--line)}
+.meta{font-size:12.5px;color:var(--ink2);margin:10px 0 8px;background:#FBF8F3;border-radius:10px;padding:9px 12px}
+.meta b{color:var(--accent)}
+ul.tasks{list-style:none}
+ul.tasks li{border-bottom:1px dashed var(--line)}
+ul.tasks li:last-child{border-bottom:none}
+label.task{display:flex;gap:10px;align-items:flex-start;padding:9px 2px;font-size:14px;cursor:pointer}
+label.task input{margin-top:3px;width:18px;height:18px;accent-color:var(--done);flex-shrink:0}
+label.task.checked span{color:var(--ink3);text-decoration:line-through;text-decoration-color:#C8BBAD}
+.tbl-wrap{overflow-x:auto;margin:8px 0 4px}
+table{border-collapse:collapse;width:100%;font-size:12.5px;min-width:520px}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:#F3EDE4;font-weight:700;white-space:nowrap}
+td.num{text-align:right;white-space:nowrap}
+tr.hl td{background:#FBF4EA}
+.note{font-size:12px;color:var(--ink2);margin-top:8px}
+.foot{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink3);display:flex;flex-direction:column;gap:5px}
+.copybar{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom))}
+.copybar .wrap{display:flex;gap:10px}
+button.copy{flex:1;background:var(--accent);color:#fff;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+button.copy:active{opacity:.85}
+button.reset{background:#EFE9E1;color:var(--ink2);border:none;border-radius:12px;padding:13px 16px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit}
+.toast{position:fixed;bottom:86px;left:50%;transform:translateX(-50%);background:#33261D;color:#F6EFE7;font-size:13px;padding:10px 18px;border-radius:24px;opacity:0;pointer-events:none;transition:opacity .25s;white-space:nowrap;z-index:9}
+.toast.show{opacity:1}
+textarea#sink{position:absolute;left:-9999px;top:0}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>☕ 오릭 원두 도입 트래커</h1>
+    <div class="sub">오릭커피스튜디오 × 커피로스터리 라온 · 기준일 2026.8.17 · 작성 문덕청</div>
+    <div class="progress-row">
+      <div class="bar"><i id="barFill"></i></div>
+      <div class="pct" id="pctText">0% (0/0)</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="notice">체크 상태는 이 화면이 열려 있는 동안만 유지됩니다. 회의·작업 후 아래 <b>[진행상황 복사]</b>를 눌러 카톡방에 붙여넣어 기록으로 남겨 주세요.</div>
+
+  <div class="section-title">운영 3원칙</div>
+  <div class="rules">
+    <div><b>1.</b> 숫자는 참고, 결정은 커핑(맛)이 한다 — 원가가 싸도 맛에서 지면 도입하지 않는다.</div>
+    <div><b>2.</b> 모든 단계는 기록을 남긴다 — 감이 아니라 시트와 데이터로 다음 단계를 연다.</div>
+    <div><b>3.</b> 잔당 20g 정량 계량을 지킨다 — 계량이 무너지면 설계한 원가율도 무너진다.</div>
+  </div>
+
+  <div class="section-title">도입 프로세스 <small>단계를 눌러 펼치고, 완료한 항목을 체크하세요</small></div>
+  <div id="steps"></div>
+
+  <div class="section-title">대표님 결정 사항 <small>결정되면 체크</small></div>
+  <details class="step" open id="decisionCard">
+    <summary><div class="stepnum">★</div><div class="stepname">의사결정 보드</div><span class="badge wait" data-badge>대기</span><span class="chev">▼</span></summary>
+    <div class="body"><ul class="tasks" id="decisions"></ul></div>
+  </details>
+
+  <div class="section-title">참고 데이터 시트</div>
+
+  <details class="step">
+    <summary><div class="stepnum">A</div><div class="stepname">라온 원두 5종 분석</div><span class="chev">▼</span></summary>
+    <div class="body">
+      <div class="tbl-wrap"><table>
+        <tr><th>원두</th><th>가공·특징</th><th>용도</th><th>단가</th></tr>
+        <tr><td>코스타리카 산타테레사 2000 라 몬타나</td><td>화이트허니 · 따라수 1,900~2,050m · 황도·오렌지·사탕수수·바닐라</td><td>핸드드립</td><td class="num">45,000/kg</td></tr>
+        <tr><td>에티오피아 예가체프 아제레 G1</td><td>워시드 · 결점두 최상위 등급 · 자스민·시트러스·홍차</td><td>핸드드립</td><td class="num">45,000/kg</td></tr>
+        <tr><td>과테말라 엔트레 볼카네스 (강배전)</td><td>워시드 · 화산지대 로트 · 초콜릿·너트·캐러멜</td><td>에스프레소·라떼</td><td class="num">47,000/kg</td></tr>
+        <tr><td>콜롬비아 수프리모</td><td>워시드 · 크기 등급(품질 보증 아님) · 무난한 밸런스</td><td>베이스 보조</td><td class="num">45,000/kg</td></tr>
+        <tr><td>에티오피아 무라고 바샤 베켈레 COE 1</td><td>무산소 내추럴 · ’24 CoE 우승 계보 · 자두·캔디·블루베리</td><td>시그니처 한정</td><td class="num">75,000/200g*</td></tr>
+      </table></div>
+      <div class="note">품질 신호: 생두가 커피리브레 취급 로트와 3종 일치 · ‘강배전’ 수기 표기 = 로스팅 커스텀 가능. *명세표 매칭 추정 — 원본 확인 예정.</div>
+    </div>
+  </details>
+
+  <details class="step">
+    <summary><div class="stepnum">B</div><div class="stepname">원가 비교 (1잔 20g 기준)</div><span class="chev">▼</span></summary>
+    <div class="body">
+      <div class="tbl-wrap"><table>
+        <tr><th>원두</th><th>구매 단가</th><th>g당</th><th>잔당(20g)</th></tr>
+        <tr><td>현행 · 콜롬비아 라 리제르바 무산소 허니</td><td class="num">52,000/500g</td><td class="num">104원</td><td class="num">2,080원</td></tr>
+        <tr><td>현행 · 애프터파티 블렌드(커피화)</td><td class="num">56,000/500g</td><td class="num">112원</td><td class="num">2,240원</td></tr>
+        <tr><td>현행 · 원두 B(명칭 확인 필요)</td><td class="num">63,800/1kg</td><td class="num">63.8원</td><td class="num">1,276원</td></tr>
+        <tr class="hl"><td>라온 · 산타테레사 / 아제레</td><td class="num">45,000/1kg</td><td class="num">45원</td><td class="num">900원</td></tr>
+        <tr class="hl"><td>라온 · 엔트레 볼카네스(강배전)</td><td class="num">47,000/1kg</td><td class="num">47원</td><td class="num">940원</td></tr>
+        <tr><td>라온 · COE 무산소 내추럴</td><td class="num">75,000/200g</td><td class="num">375원</td><td class="num">7,500원</td></tr>
+      </table></div>
+      <div class="note">라온 싱글 = 현행 프리미엄 원가의 43~45%. 단, 싸다 ≠ 같은 맛 — 격차의 실효성은 블라인드 커핑이 결정. COE(7,500원/잔)는 일반 메뉴 불가, 화제성 한정용. 대표님 계산 검산 결과 전부 일치.</div>
+    </div>
+  </details>
+
+  <details class="step">
+    <summary><div class="stepnum">C</div><div class="stepname">가격 설계안 (A안 3단 / B안 2단)</div><span class="chev">▼</span></summary>
+    <div class="body">
+      <div class="meta"><b>A안 · 3단 구성(권장 검토)</b> — 대표님 이원화 전략 뼈대 유지</div>
+      <div class="tbl-wrap"><table>
+        <tr><th>라인</th><th>원두</th><th>판매가</th><th>잔당 원가</th><th>원가율 · 역할</th></tr>
+        <tr><td>기본 드립</td><td>라온 산타테레사·아제레</td><td class="num">8,000원</td><td class="num">900원</td><td>11% · 회전율 확보</td></tr>
+        <tr><td>프리미엄 드립</td><td>현행 콜롬비아 무산소·애프터파티</td><td class="num">11,000~12,000원</td><td class="num">2,080~2,240원</td><td>17~20% · 객단가</td></tr>
+        <tr><td>시그니처 한정</td><td>라온 COE 무산소 내추럴</td><td class="num">15,000원</td><td class="num">7,500원</td><td>50% · 화제성(주말 소량)</td></tr>
+      </table></div>
+      <div class="meta"><b>B안 · 2단 구성</b> — 기본 8,000원 + 프리미엄 12,000원 모두 라온 싱글(원가율 7.5%). 마진 최상. 단, 현행 프리미엄과의 블라인드 비교에서 이겨야 성립 — 지면 A안.</div>
+      <div class="note">공통: 12,000원 이상 라인은 주간 판매량 추적 → 미달 시 가격 인하 대신 디저트 세트 결합(대표님 리스크 분석 반영). 기본 라인을 원두B(1,276원)→라온 싱글(900원)로 바꾸면 같은 8,000원에 원가율 16%→11% + ‘스페셜티 싱글오리진’ 스토리 확보.</div>
+    </div>
+  </details>
+
+  <details class="step">
+    <summary><div class="stepnum">D</div><div class="stepname">라온에 요청할 5가지 (계약 전)</div><span class="chev">▼</span></summary>
+    <div class="body">
+      <div class="meta">① 로스팅 날짜·소비기한 라벨 표기(전 품목 미표기, 최우선) ② COE 로트 증빙 — 연도·순위·낙찰 여부 ③ 수프리모 단가 조정 또는 전용 베이스 블렌드 ④ 납품 주기·최소수량·로스팅 후 도착일·결제 ⑤ 소분판매용 한글 표시사항 라벨(오릭 식품소분업 등록 보유)</div>
+    </div>
+  </details>
+
+  <div class="foot">
+    <div>출처: 커피리브레(산타테레사 2000·엔트레 볼카네스·무라고 바샤 베켈레 ’24 CoE 우승로트 생두), 코케·UFO커피(무라고 내추럴), 로밍블랙(예가체프 G1 1kg 36,000원), 다원식품(수프리모 1kg 25,000원), 미커피(산타테레사 게이샤 W.H). 조회 2026.8.17</div>
+    <div>유보: 라온 주소(전남 장성권 추정)·명세표 75,000원 라인 COE 매칭은 원본 확인 후 확정. 잔당 원가는 20g 기준, 추출 실패분 미포함.</div>
+  </div>
+</div>
+
+<div class="copybar"><div class="wrap">
+  <button class="reset" onclick="resetAll()">초기화</button>
+  <button class="copy" onclick="copyStatus()">📋 진행상황 복사 → 카톡 붙여넣기</button>
+</div></div>
+<div class="toast" id="toast">복사됐어요. 카톡방에 붙여넣으세요!</div>
+<textarea id="sink"></textarea>
+
+<script>
+const STEPS = [
+ {n:"0", name:"공급처 검증", goal:"장기 거래 상대로 문제없는지 서류로 확인", pass:"서류로 확인되는 정상 사업장", out:"공급처 정보 시트",
+  tasks:[["라온 주소·상호 확정 (명세표 공급자란 클로즈업 or 명함 확보)",false],["홈택스 사업자등록 상태 조회 (207-08-40841)",false],["로스팅 날짜 라벨 표기 요청 전달",false]]},
+ {n:"1", name:"스펙·단가 분석", goal:"산지·가공·등급·단가를 현행 원두와 비교", pass:"동급 이상 스펙 + 단가 경쟁력", out:"검토 보고서·비교표(시트 A·B)",
+  tasks:[["5종 산지·가공·등급 분석 (8/17 완료)",true],["현행 원두 대비 g당 단가 비교 (8/17 완료)",true],["가격 적정성·협상 포인트 도출 (8/17 완료)",true]]},
+ {n:"2", name:"블라인드 커핑", goal:"이름 가리고 현행 원두와 동시 시음, 전원 채점", pass:"라온이 현행과 동점 이상일 때만 통과", out:"커핑 시트",
+  tasks:[["커핑 일정 확정 (대표님)",false],["시료 준비: 라온 2~3종 + 현행 2종 무기명",false],["전원 채점: 향·산미·단맛·밸런스·후미",false],["판정 기록: 동점 이상 여부",false]]},
+ {n:"3", name:"실전 추출 테스트", goal:"오릭 장비·물·레시피로 실제 메뉴 맛 검증", pass:"재현 가능한 레시피 완성", out:"레시피 카드",
+  tasks:[["드립 20g 레시피 3회 반복 추출",false],["강배전 과테말라 샷·라떼 테스트",false],["레시피 카드 작성 (도징·수온·시간)",false]]},
+ {n:"4", name:"원가·가격 설계", goal:"잔당 원가를 대입해 라인업·가격 확정", pass:"원가율 10~20% (시그니처 예외)", out:"신규 가격표(안)",
+  tasks:[["가격 구조 선택: A안(3단) / B안(2단)",false],["COE 처리 결정: 시그니처 / 소분 / 보류",false],["신규 가격표(안) 확정",false]]},
+ {n:"5", name:"2주 파일럿", goal:"'오늘의 드립' 2종 한정으로 저위험 실험", pass:"판매량·재주문·리뷰 반응 확인", out:"주간 판매 데이터",
+  tasks:[["파일럿 시작: 오늘의 드립 2종 운영",false],["1주차 판매·리뷰 기록",false],["2주차 판매·리뷰 기록",false]]},
+ {n:"6", name:"공급 계약", goal:"조건을 문서로 확정하고 명의 정리", pass:"요청사항 5건 충족(시트 D)", out:"합의서·발주 기준",
+  tasks:[["라온 요청 5건 회신 확인",false],["납품 조건 합의(주기·수량·도착일·결제)",false],["오릭 명의 증빙으로 전환",false]]},
+ {n:"7", name:"출시·모니터링", goal:"업그레이드 스토리로 알리고 데이터로 관리", pass:"4주 후 유지/조정/철회 판정", out:"모니터링 시트",
+  tasks:[["플레이스 새소식 공지 (원두 업그레이드 스토리)",false],["리뷰 유도 멘트 적용 (산지·가공 키워드)",false],["주간 모니터링 시트 운영 (원두별 잔수·소진·리뷰)",false],["4주 판정: 유지 / 조정 / 철회",false]]}
+];
+const DECISIONS = [
+ ["커핑 일정 확정 — 언제로 할까요? (근무자 포함 권장)",false],
+ ["가격 구조 — A안(3단) vs B안(2단)",false],
+ ["COE — 15,000원 주말 한정 / 소분 판매 / 보류",false],
+ ["베이스 교체 — 현행 vs 강배전 과테말라 블라인드 비교 진행 여부",false],
+ ["전체 메뉴 가격표 공유 → 전 메뉴 원가율 점검",false]
+];
+
+const stepsEl = document.getElementById("steps");
+STEPS.forEach((s,si)=>{
+  const d = document.createElement("details"); d.className="step"; if(si===0||si===2) d.open=true;
+  d.innerHTML = `<summary><div class="stepnum">${s.n}</div><div class="stepname">${s.name}<small>${s.goal}</small></div><span class="badge wait" data-badge>대기</span><span class="chev">▼</span></summary>
+  <div class="body"><div class="meta"><b>통과 기준</b> ${s.pass} · <b>산출물</b> ${s.out}</div>
+  <ul class="tasks">${s.tasks.map((t,ti)=>`<li><label class="task${t[1]?" checked":""}"><input type="checkbox" data-step="${si}" ${t[1]?"checked":""}><span>${t[0]}</span></label></li>`).join("")}</ul></div>`;
+  stepsEl.appendChild(d);
+});
+const decEl = document.getElementById("decisions");
+DECISIONS.forEach((t,i)=>{
+  decEl.insertAdjacentHTML("beforeend",`<li><label class="task"><input type="checkbox" data-dec="1"><span>${t[0]}</span></label></li>`);
+});
+
+function refresh(){
+  const boxes=[...document.querySelectorAll('input[type=checkbox]')];
+  const done=boxes.filter(b=>b.checked).length;
+  const pct=boxes.length?Math.round(done/boxes.length*100):0;
+  document.getElementById("barFill").style.width=pct+"%";
+  document.getElementById("pctText").textContent=`${pct}% (${done}/${boxes.length})`;
+  document.querySelectorAll("details.step").forEach(card=>{
+    const bs=[...card.querySelectorAll("input")]; if(!bs.length) return;
+    const dn=bs.filter(b=>b.checked).length;
+    const badge=card.querySelector("[data-badge]"); if(!badge) return;
+    if(dn===bs.length){badge.textContent="완료 "+dn+"/"+bs.length;badge.className="badge done";}
+    else if(dn>0){badge.textContent="진행 "+dn+"/"+bs.length;badge.className="badge doing";}
+    else {badge.textContent="대기 0/"+bs.length;badge.className="badge wait";}
+  });
+  document.querySelectorAll("label.task").forEach(l=>{
+    l.classList.toggle("checked", l.querySelector("input").checked);
+  });
+}
+document.addEventListener("change",e=>{ if(e.target.matches("input[type=checkbox]")) refresh(); });
+
+function statusText(){
+  const now=new Date();
+  const ts=`${now.getFullYear()}.${now.getMonth()+1}.${now.getDate()} ${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
+  const boxes=[...document.querySelectorAll('input[type=checkbox]')];
+  const done=boxes.filter(b=>b.checked).length;
+  const pct=boxes.length?Math.round(done/boxes.length*100):0;
+  let out=`[오릭 원두 도입 진행상황] ${ts}\n전체 ${pct}% (${done}/${boxes.length})\n`;
+  document.querySelectorAll("details.step").forEach(card=>{
+    const name=card.querySelector(".stepname"); const bs=[...card.querySelectorAll("input")];
+    if(!name||!bs.length) return;
+    const dn=bs.filter(b=>b.checked).length;
+    const num=card.querySelector(".stepnum").textContent;
+    const mark=dn===bs.length?"✅":(dn>0?"▶":"–");
+    out+=`${mark} ${num==="★"?"결정사항":"STEP"+num+" "+name.childNodes[0].textContent} ${dn}/${bs.length}\n`;
+  });
+  const todo=[...document.querySelectorAll("label.task")].filter(l=>!l.querySelector("input").checked).slice(0,3)
+    .map(l=>"· "+l.querySelector("span").textContent);
+  if(todo.length) out+=`다음 할 일:\n${todo.join("\n")}`;
+  return out.trim();
+}
+function copyStatus(){
+  const txt=statusText();
+  const show=()=>{const t=document.getElementById("toast");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1800);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(show).catch(()=>fallback(txt,show));
+  } else fallback(txt,show);
+}
+function fallback(txt,cb){
+  const ta=document.getElementById("sink");ta.value=txt;ta.select();ta.setSelectionRange(0,99999);
+  try{document.execCommand("copy");cb();}catch(e){alert(txt);}
+}
+function resetAll(){
+  if(!confirm("모든 체크를 초기화할까요? (완료된 STEP 1 포함)")) return;
+  document.querySelectorAll("input[type=checkbox]").forEach(b=>b.checked=false);
+  refresh();
+}
+refresh();
+</script>
+</body>
+</html>
